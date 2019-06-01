@@ -10,6 +10,7 @@
 #cesar, 
 #atbash, 
 #replace, 
+#flasner, 
 #wrapFreqAnswer, 
 #tableFreqAnswer, 
 #freqDecodedWrap,
@@ -18,7 +19,7 @@
 #replaceAnsWrap {
   display: none;
 }
-#freqDecodedWrap, #cesarAnsWrap, #atbashAnsWrap, #replaceAnsWrap {
+#freqDecodedWrap, #cesarAnsWrap, #atbashAnsWrap, #replaceAnsWrap, #btnAnalysis {
   margin-top: 10px;
 }
 #footer {

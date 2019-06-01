@@ -10,7 +10,7 @@ let originalFreq = {
   'В':0.04533,
   'Л':0.04343,
   'К':0.03486,
-  
+
   'М':0.03203,
   'Д':0.02977,
   'П':0.02804,
@@ -21,7 +21,7 @@ let originalFreq = {
   'Г':0.01687,
   'З':0.01641,
   'Б':0.01592,
-  
+
   'Ч':0.0145,
   'Й':0.01208,
   'Х':0.00966,
@@ -41,37 +41,55 @@ $('.nav-link').each(function(){
   if (window.location.href.includes(this.href)) {
     $(this).addClass('active')
   }
-})
+});
 
 // init app router
 router(window.location.href.substring(window.location.href.lastIndexOf('?') + 1, window.location.href.length));
 
 function router(path) {
-  if (path == "analysis") {
+  if (path === "analysis") {
     openFrequencyAnalysis();
   }
-  if (path == "cesar") {
+  if (path === "cesar") {
     openCesarCrypt();
   }
-  if (path == "atbash") {
+  if (path === "atbash") {
     openAtbashCrypt();
   }
-  if (path == "replace") {
+  if (path === "replace") {
     openReplaceCrypt();
+  }
+  if (path === "flasner") {
   }
 }
 
 // UI
 function hideAll() {
-	$('#frequency-analysis').hide()
-	$('#cesar').hide()
-	$('#atbash').hide()
-	$('#replace').hide()
+	$('#frequency-analysis').hide();
+	$('#cesar').hide();
+	$('#atbash').hide();
+	$('#replace').hide();
+	$('#flasner').hide();
+}
+
+function openFlasnerCrypt() {
+  hideAll();
+  $('#flasner').show();
+  $('#btnFlasnerEncrypt').click(function() {
+    $('#flasnerAnswerLabel').html("Зашифрованный текст");
+    $('#flasnerAnswer').val(flasner($('#flasnerText').val(), $('#flasnerKey').val(), true));
+    $('#flasnerAnsWrap').show();
+  });
+  $('#btnFlasnerDecrypt').click(function() {
+    $('#flasnerAnswerLabel').html("Расшифрованный текст");
+    $('#flasnerAnswer').val(flasner($('#flasnerText').val(), $('#flasnerKey').val(), false));
+    $('#flasnerAnsWrap').show();
+  });
 }
 
 function openCesarCrypt() {
-  hideAll()
-  $('#cesar').show()
+  hideAll();
+  $('#cesar').show();
   $('#btnCesarEncrypt').click(function() {
     $('#cesarAnswerLabel').html("Зашифрованный текст");
     $('#cesarAnswer').val(cesar($('#cesarText').val(), $('#cesarKey').val(), true));
@@ -85,8 +103,8 @@ function openCesarCrypt() {
 }
 
 function openAtbashCrypt() {
-  hideAll()
-  $('#atbash').show()
+  hideAll();
+  $('#atbash').show();
   $('#btnAtbash').click(function() {
     $('#atbashAnswer').val(atbash($('#atbashText').val()));
     $('#atbashAnsWrap').show();
@@ -94,13 +112,13 @@ function openAtbashCrypt() {
 }
 
 function openReplaceCrypt() {
-  hideAll()
-  $('#replace').show()
+  hideAll();
+  $('#replace').show();
   let alph = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя0123456789.,!?- ';
   $('#btnGenPermutation').click(function() {
     $('#replacePermutation').val(alph.shuffle());
   });
-  
+
   $('#btnReplaceEncrypt').click(function() {
     $('#replaceAnswerLabel').html("Зашифрованный текст");
     $('#replaceAnswer').val(commonReplace($('#replaceText').val(), $('#replacePermutation').val(), true));
@@ -114,30 +132,41 @@ function openReplaceCrypt() {
 }
 
 function openFrequencyAnalysis() {
-	hideAll()
-  $('#frequency-analysis').show()
+	hideAll();
+  $('#frequency-analysis').show();
   $('#btnAnalysis').click(function(){
     // get frequency from text
     let text = $('#textToFreq').val().toUpperCase();
 	console.log(text);
 	if (text != "") {
-		var freq = freqAnalysis(text);
+    let isBiagram = $('#isBiagram').prop("checked");
+    let freq = {};
+    if (isBiagram) {
+      freq = freq2Analysis(text);
+    } else {
+      freq = freqAnalysis(text);
+    }
 		let freqs = sortObject(freq);
 		// set frequency in table
 		$('#tableFreqAnswer > tbody').empty();
-		for (var i in freqs) {
+		for (let i in freqs) {
       if (freqs[i].value > 0.000001) {
         $('#tableFreqAnswer > tbody:last-child').append('<tr><td>'+ freqs[i].key +'</td><td>'+ freqs[i].value.toFixed(5) +'</td></tr>');
       }
 		}
 		console.log(freqs);
 		$('#tableFreqAnswer').show();
-		$('#wrapFreqAnswer').show();
-    $('#btnHackFreq').click(function() {
-      // try to decode with original frequency
-      $('#textFreqAnswer').val(decodeByFrequency(text, freq));
-      $('#freqDecodedWrap').show();
-    })
+    if (!isBiagram) {
+      $('#wrapFreqAnswer').show();
+      $('#btnHackFreq').click(function() {
+        // try to decode with original frequency
+        $('#textFreqAnswer').val(decodeByFrequency(text, freq));
+        $('#freqDecodedWrap').show();
+      })
+    } else {
+      $('#wrapFreqAnswer').hide();
+      $('#freqDecodedWrap').hide();
+    }
 	} else {
 		alert("Введите текст");
 	}
@@ -145,11 +174,34 @@ function openFrequencyAnalysis() {
 }
 
 // Algorithm
+function flasner(text, key, isEncrypt) {
+  if (key.length % 2 === 1) {
+    alert("Введите ключ, длина которого кратна 2");
+    return;
+  }
+  let k = ley.length / 2;
+  let side = k * k;
+
+}
+
+function getBlocks(text, size) {
+  let blocks = [];
+  for (let i = 0; i < text.length; i += size) {
+    blocks.push(text.substring(i, Math.min(i + size, text.length)))
+  }
+  if (blocks[blocks.length - 1].length < size) {
+    while (blocks[blocks.length - 1].length < size) {
+      blocks[blocks.length - 1] += 'ф';
+    }
+  }
+  return blocks;
+}
+
 function commonReplace(text, permutation, isEncrypt) {
   let alph = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя0123456789.,!?- ';
-  var result = "";
-  for (var i = 0; i < text.length; i++) {
-    var c = text[i];
+  let result = "";
+  for (let i = 0; i < text.length; i++) {
+    let c = text[i];
     if (isEncrypt) {
       result += permutation[alph.indexOf(c)];
     } else {
@@ -161,9 +213,9 @@ function commonReplace(text, permutation, isEncrypt) {
 
 function atbash(text) {
   let alph = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя0123456789.,!?- ';
-  var result = "";
-  for (var ii = 0; ii < text.length; ii++) {
-    var c = text[ii];
+  let result = "";
+  for (let ii = 0; ii < text.length; ii++) {
+    let c = text[ii];
     result += alph[alph.length - alph.indexOf(c)];
   }
   return result;
@@ -171,9 +223,9 @@ function atbash(text) {
 
 function cesar(text, keyword, isEncrypt) {
   let alph = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя0123456789.,!?- ';
-  var result = "";
-  for (var i = 0; i < text.length; i++) {
-    var c = text[i];
+  let result = "";
+  for (let i = 0; i < text.length; i++) {
+    let c = text[i];
     if (isEncrypt) {
       result += alph[(alph.indexOf(c) + alph.indexOf(keyword[i % keyword.length])) % alph.length];
     } else {
@@ -183,36 +235,66 @@ function cesar(text, keyword, isEncrypt) {
   return result;
 }
 
+function freq2Analysis(text) {
+  let alph = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
+  freq = {};
+  for (let i = 0; i < alph.length; i++) {
+    freq[alph[i]] = {};
+    for (let j = 0; j < alph.length; j++) {
+      freq[alph[i]][alph[j]] = 0
+    }
+  }
+  let length = 0;
+  for (let i = 0; i < text.length - 1; i++) {
+    if (alph.includes(text[i]) && alph.includes(text[i + 1])) {
+      freq[text[i]][text[i+1]]++;
+      length++;
+    }
+  }
+  for (let i = 0; i < alph.length; i++) {
+    for (let j = 0; j < alph.length; j++) {
+      freq[alph[i]][alph[j]] /= length;
+    }
+  }
+  freqLin = {};
+  for (let i = 0; i < alph.length; i++) {
+    for (let j = 0; j < alph.length; j++) {
+      freqLin[""+alph[i]+alph[j]] = freq[alph[i]][alph[j]];
+    }
+  }
+  return freqLin;
+}
+
 function freqAnalysis(text) {
   let alph = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
-  freq = {}
-  for (var i = 0; i < alph.length; i++) {
+  freq = {};
+  for (let i = 0; i < alph.length; i++) {
     freq[alph[i]] = 0;
   }
-  var lenght = 0
-  for (var i = 0; i < text.length; i++) {
+  let length = 0;
+  for (let i = 0; i < text.length; i++) {
     if (alph.includes(text[i])) {
       freq[text[i]]++;
       length++;
     }
   }
-  for (var i = 0; i < alph.length; i++) {
+  for (let i = 0; i < alph.length; i++) {
     freq[alph[i]] /= length;
   }
-  
+
   return freq;
 }
 
 function decodeByFrequency(text, freq) {
   let alph = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
-  let freqs = sortObject(freq)
-  let origFreqs = sortObject(originalFreq)
-  let permutation = {}
-  for (var i = 0; i < freqs.length; i++) {
+  let freqs = sortObject(freq);
+  let origFreqs = sortObject(originalFreq);
+  let permutation = {};
+  for (let i = 0; i < freqs.length; i++) {
     permutation[freqs[i].key] = origFreqs[i].key;
   }
-  var ans = "";
-  for (var i = 0; i < text.length; i++) {
+  let ans = "";
+  for (let i = 0; i < text.length; i++) {
     if (alph.includes(text[i])) {
       ans += permutation[text[i]];
     } else {
@@ -224,8 +306,8 @@ function decodeByFrequency(text, freq) {
 
 // Utils
 function sortObject(obj) {
-    var arr = [];
-    for (var prop in obj) {
+    let arr = [];
+    for (let prop in obj) {
         if (obj.hasOwnProperty(prop)) {
             arr.push({
                 'key': prop,
@@ -239,14 +321,14 @@ function sortObject(obj) {
 }
 
 String.prototype.shuffle = function () {
-    var a = this.split(""),
+    let a = this.split(""),
         n = a.length;
 
-    for(var i = n - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var tmp = a[i];
+    for(let i = n - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        let tmp = a[i];
         a[i] = a[j];
         a[j] = tmp;
     }
     return a.join("");
-}
+};
