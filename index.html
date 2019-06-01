@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/custom.css"/>
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light rounded">
+        <a class="navbar-brand" href="#">Криптология</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample09" aria-controls="navbarsExample09" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExample09">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="?crypt" id="dropdown1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Шифры замены</a>
+              <div class="dropdown-menu" aria-labelledby="dropdown1">
+                <a class="dropdown-item" href="?cesar">Цезарь</a>
+                <a class="dropdown-item" href="?atbash">Атбаш</a>
+                <a class="dropdown-item" href="?replace">Общий шифр замены</a>
+              </div>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="?crypt" id="dropdown2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Шифры перестановки</a>
+              <div class="dropdown-menu" aria-labelledby="dropdown2">
+                <a class="dropdown-item" href="?viet">Шифр Виета</a>
+                <a class="dropdown-item" href="?flasner">Шифр Флейснера</a>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="?analysis">Криптоанализ</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+	</div>
+	<div class="container" style="margin-top:15px;">
+	  <div id="frequency-analysis">
+		  <center><h2>Частотный анализ</h2></center>
+      <div class="form-group">
+        <label for="textToFreq">Введите текст для анализа</label>
+        <textarea class="form-control" id="textToFreq" rows="10"></textarea>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <button class="btn btn-secondary" id="btnAnalysis">Провести анализ</button>
+          <table id="tableFreqAnswer" class="table table-striped">
+            <thead>
+              <td>Символ</td>
+              <td>Частота</td>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-md-10" id="wrapFreqAnswer">
+          <button class="btn btn-secondary" id="btnHackFreq">Попробовать расшифровать</button>
+		  <div id="freqDecodedWrap" class="form-group">
+          <label for="textToFreq">Дешифрованный текст</label>
+          <textarea class="form-control" id="textFreqAnswer" rows="13" readonly></textarea>
+		  </div>
+        </div>
+      </div>
+	  </div>
+	  <div id="cesar">
+      <center><h2>Цезарь с ключом</h2></center>
+      <div class="form-group">
+        <label for="cesarText">Введите текст</label>
+        <textarea class="form-control" id="cesarText" rows="5"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="cesarKey">Введите ключ</label>
+        <input class="form-control" id="cesarKey" type="text"/>
+      </div>
+      <button class="btn btn-secondary" id="btnCesarEncrypt">Зашифровать</button>
+      <button class="btn btn-secondary" id="btnCesarDecrypt">Расшифровать</button>
+      <div id="cesarAnsWrap" class="form-group">
+          <label id="cesarAnswerLabel" for="cesarAnswer">Дешифрованный текст</label>
+          <textarea class="form-control" id="cesarAnswer" rows="5" readonly></textarea>
+		  </div>
+	  </div>
+	  <div id="atbash">
+      <center><h2>Атбаш</h2></center>
+      <div class="form-group">
+        <label for="atbashText">Введите текст</label>
+        <textarea class="form-control" id="atbashText" rows="5"></textarea>
+      </div>
+      <button class="btn btn-secondary" id="btnAtbash">Шифровать</button>
+      <div id="atbashAnsWrap" class="form-group">
+          <label for="atbashAnswer">Шифровка</label>
+          <textarea class="form-control" id="atbashAnswer" rows="5" readonly></textarea>
+		  </div>
+	  </div>
+	  <div id="replace">
+      <center><h2>Общий шифр перестановки</h2></center>
+      <div class="form-group">
+        <label for="replaceText">Введите текст</label>
+        <textarea class="form-control" id="replaceText" rows="5"></textarea>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <button class="btn btn-secondary" id="btnGenPermutation">Генерировать</button>
+        </div>
+        <div class="col-md-10">
+          <div class="form-group">
+            <label for="replacePermutation">Перестановка</label>
+            <input class="form-control" id="replacePermutation" type="text"/>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-secondary" id="btnReplaceEncrypt">Зашифровать</button>
+      <button class="btn btn-secondary" id="btnReplaceDecrypt">Расшифровать</button>
+      <div id="replaceAnsWrap" class="form-group">
+          <label id="replaceAnswerLabel" for="replaceAnswer">Дешифрованный текст</label>
+          <textarea class="form-control" id="replaceAnswer" rows="5" readonly></textarea>
+		  </div>
+	  </div>
+    </div>
+    <div style="height:15px;">
+    </div>
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

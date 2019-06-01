@@ -1,0 +1,26 @@
+.navbar {
+  margin-top: 15px;
+}
+
+#tableFreqAnswer {
+  margin-top: 15px;
+}
+
+#frequency-analysis, 
+#cesar, 
+#atbash, 
+#replace, 
+#wrapFreqAnswer, 
+#tableFreqAnswer, 
+#freqDecodedWrap,
+#cesarAnsWrap,
+#atbashAnsWrap,
+#replaceAnsWrap {
+  display: none;
+}
+#freqDecodedWrap, #cesarAnsWrap, #atbashAnsWrap, #replaceAnsWrap {
+  margin-top: 10px;
+}
+#footer {
+  height: 100px;
+}
