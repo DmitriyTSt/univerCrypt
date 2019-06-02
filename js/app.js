@@ -62,6 +62,9 @@ function router(path) {
   if (path === "flasner") {
     openFlasnerCrypt();
   }
+  if (path === "viet") {
+    openVietCrypt();
+  }
 }
 
 // UI
@@ -71,6 +74,22 @@ function hideAll() {
 	$('#atbash').hide();
 	$('#replace').hide();
 	$('#flasner').hide();
+	$('#viet').hide();
+}
+
+function openVietCrypt() {
+  hideAll();
+  $('#viet').show();
+  $('#btnVietEncrypt').click(function() {
+    $('#vietAnswerLabel').html("Зашифрованный текст");
+    $('#vietAnswer').val(viet($('#vietText').val(), $('#vietKey').val(), true));
+    $('#vietAnsWrap').show();
+  });
+  $('#btnVietDecrypt').click(function() {
+    $('#vietAnswerLabel').html("Расшифрованный текст");
+    $('#vietAnswer').val(viet($('#vietText').val(), $('#vietKey').val(), false));
+    $('#vietAnsWrap').show();
+  });
 }
 
 function openFlasnerCrypt() {
@@ -200,6 +219,47 @@ function openFrequencyAnalysis() {
 }
 
 // Algorithm
+function viet(text, k, isEncrypt) {
+  let blocks = getBlocks(text, k * k);
+  let result = "";
+  blocks.forEach(function (str) {
+    if (isEncrypt) {
+      let i = 1;
+      let j = 1;
+      for (let it = 1; it <= k * k; it++) {
+        result += str[(i - 1) * k + j - 1];
+        if ((i + j) % 2 === 0) {
+          if (j < k) j++;
+          else i += 2;
+          if (i > 1) i--;
+        } else {
+          if (i < k) i++;
+          else j += 2;
+          if (j > 1) j--;
+        }
+      }
+    } else {
+      let i = 1;
+      let j = 1;
+      let cBlock = Array(k * k);
+      for (let it = 1; it <= k * k; it++) {
+        cBlock[(i - 1) * k + j - 1] = str[it - 1];
+        if ((i + j) % 2 === 0) {
+          if (j < k) j++;
+          else i += 2;
+          if (i > 1) i--;
+        } else {
+          if (i < k) i++;
+          else j += 2;
+          if (j > 1) j--;
+        }
+      }
+      result += cBlock.join("");
+    }
+  });
+  return result;
+}
+
 function flasner(text, key, isEncrypt, matrix) {
   if (key.length % 2 === 1) {
     alert("Введите ключ, длина которого кратна 2");

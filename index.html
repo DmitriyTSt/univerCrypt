@@ -144,6 +144,23 @@
           <textarea class="form-control" id="flasnerAnswer" rows="5" readonly></textarea>
 		  </div>
 	  </div>
+      <div id="viet">
+        <center><h2>Шифр Виета</h2></center>
+        <div class="form-group">
+          <label for="vietText">Введите текст</label>
+          <textarea class="form-control" id="vietText" rows="5"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="vietKey">Введите k</label>
+          <input class="form-control" id="vietKey" type="text"/>
+        </div>
+        <button class="btn btn-secondary" id="btnVietEncrypt">Зашифровать</button>
+        <button class="btn btn-secondary" id="btnVietDecrypt">Расшифровать</button>
+        <div id="vietAnsWrap" class="form-group">
+          <label id="vietAnswerLabel" for="vietAnswer">Дешифрованный текст</label>
+          <textarea class="form-control" id="vietAnswer" rows="5" readonly></textarea>
+        </div>
+      </div>
     </div>
     <div style="height:15px;">
     </div>

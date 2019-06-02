@@ -11,13 +11,15 @@
 #atbash, 
 #replace, 
 #flasner, 
-#wrapFreqAnswer, 
+#viet,
+#wrapFreqAnswer,
 #tableFreqAnswer, 
 #freqDecodedWrap,
 #cesarAnsWrap,
 #atbashAnsWrap,
 #replaceAnsWrap,
 #flasnerAnsWrap,
+#vietAnsWrap,
 #btnFlasnerEncrypt,
 #btnFlasnerDecrypt {
   display: none;
