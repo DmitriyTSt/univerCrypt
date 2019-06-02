@@ -16,12 +16,32 @@
 #freqDecodedWrap,
 #cesarAnsWrap,
 #atbashAnsWrap,
-#replaceAnsWrap {
+#replaceAnsWrap,
+#flasnerAnsWrap,
+#btnFlasnerEncrypt,
+#btnFlasnerDecrypt {
   display: none;
 }
-#freqDecodedWrap, #cesarAnsWrap, #atbashAnsWrap, #replaceAnsWrap, #btnAnalysis {
+#freqDecodedWrap,
+#cesarAnsWrap,
+#atbashAnsWrap,
+#replaceAnsWrap,
+#btnAnalysis,
+#flasnerTable,
+#btnFlasnerEncrypt,
+#btnFlasnerDecrypt{
   margin-top: 10px;
 }
 #footer {
   height: 100px;
+}
+
+#flasnerTable tr {
+  height: 25px;
+}
+#flasnerTable td {
+  width: 25px;
+  border: 1px solid slategray;
+  text-align: center;
+  vertical-align: center;
 }

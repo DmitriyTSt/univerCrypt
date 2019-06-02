@@ -60,6 +60,7 @@ function router(path) {
     openReplaceCrypt();
   }
   if (path === "flasner") {
+    openFlasnerCrypt();
   }
 }
 
@@ -75,14 +76,39 @@ function hideAll() {
 function openFlasnerCrypt() {
   hideAll();
   $('#flasner').show();
+  let fkey = $('#flasnerKey');
+  $('#btnFlasnerMatrix').click(function() {
+    let key = fkey.val();
+    if (key.length % 2 === 1 || key.length === 0) {
+      alert("Введите ключ, длина которого кратна 2");
+      return;
+    }
+    let k = key.length / 2;
+    window.flasnerTable = getFlasnerMatrix(k);
+    window.flasnerList = [];
+    for (let i = 1; i <= k * k; i++) {
+      window.flasnerList.push(i);
+    }
+    $('#flasnerTable > tbody').empty();
+    for (let i = 0; i < 2 * k; i++) {
+      let row = "<tr>";
+      for (let j = 0; j < 2 * k; j++) {
+        row += "<td ii="+ i +" jj="+ j +" onclick='flasnerTableClick(this);'>" + window.flasnerTable[i][j]+ "</td>"
+      }
+      row += "</tr>";
+      $('#flasnerTable > tbody:last-child').append(row);
+    }
+    $('#btnFlasnerEncrypt').show();
+    $('#btnFlasnerDecrypt').show();
+  });
   $('#btnFlasnerEncrypt').click(function() {
     $('#flasnerAnswerLabel').html("Зашифрованный текст");
-    $('#flasnerAnswer').val(flasner($('#flasnerText').val(), $('#flasnerKey').val(), true));
+    $('#flasnerAnswer').val(flasner($('#flasnerText').val(), fkey.val(), true, window.flasnerTable));
     $('#flasnerAnsWrap').show();
   });
   $('#btnFlasnerDecrypt').click(function() {
     $('#flasnerAnswerLabel').html("Расшифрованный текст");
-    $('#flasnerAnswer').val(flasner($('#flasnerText').val(), $('#flasnerKey').val(), false));
+    $('#flasnerAnswer').val(flasner($('#flasnerText').val(), fkey.val(), false, window.flasnerTable));
     $('#flasnerAnsWrap').show();
   });
 }
@@ -174,14 +200,137 @@ function openFrequencyAnalysis() {
 }
 
 // Algorithm
-function flasner(text, key, isEncrypt) {
+function flasner(text, key, isEncrypt, matrix) {
   if (key.length % 2 === 1) {
     alert("Введите ключ, длина которого кратна 2");
     return;
   }
-  let k = ley.length / 2;
+  let k = key.length / 2;
   let side = k * k;
+  let blocks = getBlocks(text, side * side);
+  let result = "";
 
+  blocks.forEach(function (block, i) {
+    result += flasnerBlock(block, key, isEncrypt, matrix);
+  });
+  return result;
+}
+
+function flasnerTableClick(el) {
+  let i = el.getAttribute('ii');
+  let j = el.getAttribute('jj');
+  let pos = window.flasnerList.indexOf(parseInt($(el).html()));
+  if (pos === -1) {
+    alert("Выберите возможную ячейку. Оставшиеся числа: " + window.flasnerList.join(", "))
+  } else {
+    window.flasnerList.splice(pos, 1);
+    window.flasnerTable[i][j] = -1;
+    $(el).prop('style', 'background: lightgray;')
+  }
+}
+
+function getFlasnerMatrix(k) {
+  let matrix = [];
+  for (let i = 0; i < 2 * k; i++) {
+    matrix.push(Array(2*k).fill(0));
+  }
+  let m1 = [];
+  for (let i = 0; i < k; i++) {
+    m1.push(Array(k).fill(0));
+  }
+  for (let i = 0; i < k; i++) {
+    for (let j = 0; j < k; j++) {
+      m1[i][j] = i * k + j + 1;
+      matrix[i][j] = m1[i][j];
+    }
+  }
+  let m2 = rotateRight90(m1);
+  let m3 = rotateRight90(m2);
+  let m4 = rotateRight90(m3);
+  for (let i = 0; i < k; i++) {
+    for (let j = 0; j < k; j++) {
+      matrix[i][j+k] = m2[i][j];
+      matrix[i+k][j] = m4[i][j];
+      matrix[i+k][j+k] = m3[i][j];
+    }
+  }
+  return matrix;
+}
+
+// only for square matrix
+function rotateRight90(matrix) {
+  let k = matrix.length;
+  let rotated = [];
+  for (let i = 0; i < k; i++) {
+    rotated.push(Array(k).fill(0));
+  }
+  for (let i = 0; i < k; i++) {
+    for (let j = 0; j < k; j++) {
+      rotated[i][j] = matrix[k - j - 1][i];
+    }
+  }
+  return rotated;
+}
+
+function flasnerBlock(block, key, isEncrypt, matrix) {
+  let alph = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя0123456789.,!? ";
+  let k = key.length / 2;
+  let keyOrder = {};
+  for (let i = 0; i < key.length; i++) {
+    let c = key[i];
+    if (!(c in keyOrder)) {
+      keyOrder[c] = i;
+    }
+  }
+  let orderArray = Array(keyOrder.length).fill(0);
+  let t = 0;
+  for (let i = 0; i < alph.length; i++) {
+    let c = alph[i];
+    if (c in keyOrder) {
+      orderArray[t++] = keyOrder[c];
+    }
+  }
+  let result = "";
+  let charTable = [];
+  for(let i = 0; i < 2 * k; i++) {
+    charTable.push(Array(2*k).fill("ф"));
+  }
+  if (isEncrypt) {
+    let it = 0;
+    for (let kk = 0; kk < 4; kk++) {
+      for (let i = 0; i < 2 * k; i++) {
+        for (let j = 0; j < 2 * k; j++) {
+          if (matrix[i][j] === -1) {
+            charTable[i][j] = block[it++];
+          }
+        }
+      }
+      matrix = rotateRight90(matrix);
+    }
+    orderArray.forEach(function (j) {
+      for (let i = 0; i < 2 * k; i++) {
+        result += charTable[i][j];
+      }
+    });
+  } else {
+    let it = 0;
+    orderArray.forEach(function (j) {
+      for (let i = 0; i < 2 * k; i++) {
+        charTable[i][j] = block[it++];
+      }
+    });
+    for (let kk = 0; kk < 4; kk++) {
+      for (let i = 0; i < 2 * k; i++) {
+        for (let j = 0; j < 2 * k; j++) {
+          if (matrix[i][j] === -1) {
+            result += charTable[i][j];
+          }
+        }
+      }
+      matrix = rotateRight90(matrix);
+    }
+  }
+  return result;
 }
 
 function getBlocks(text, size) {
@@ -256,7 +405,7 @@ function freq2Analysis(text) {
       freq[alph[i]][alph[j]] /= length;
     }
   }
-  freqLin = {};
+  let freqLin = {};
   for (let i = 0; i < alph.length; i++) {
     for (let j = 0; j < alph.length; j++) {
       freqLin[""+alph[i]+alph[j]] = freq[alph[i]][alph[j]];
