@@ -159,7 +159,7 @@ function openAtbashCrypt() {
 function openReplaceCrypt() {
   hideAll();
   $('#replace').show();
-  let alph = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя0123456789.,!?- ';
+  let alph = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
   $('#btnGenPermutation').click(function() {
     $('#replacePermutation').val(alph.shuffle());
   });
@@ -407,14 +407,31 @@ function getBlocks(text, size) {
 }
 
 function commonReplace(text, permutation, isEncrypt) {
-  let alph = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя0123456789.,!?- ';
+  let alph = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
   let result = "";
   for (let i = 0; i < text.length; i++) {
-    let c = text[i];
-    if (isEncrypt) {
-      result += permutation[alph.indexOf(c)];
+    if (alph.indexOf(text[i].toLowerCase()) != -1) {
+      let isUpper = text[i] == text[i].toUpperCase();
+      let c = text[i].toLowerCase();
+      if (isEncrypt) {
+        let newC = '';
+        if (isUpper) {
+          newC = permutation[alph.indexOf(c)].toUpperCase();
+        } else {
+          newC = permutation[alph.indexOf(c)];
+        }
+        result += newC;
+      } else {
+        let newC = '';
+        if (isUpper) {
+          newC = alph[permutation.indexOf(c)].toUpperCase();
+        } else {
+          newC = alph[permutation.indexOf(c)];
+        }
+        result += alph[permutation.indexOf(c)];
+      }
     } else {
-      result += alph[permutation.indexOf(c)];
+      result += text[i];
     }
   }
   return result;
